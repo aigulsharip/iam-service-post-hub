@@ -3,6 +3,7 @@ package com.post_hub.iam_service.controller;
 import com.post_hub.iam_service.service.CommentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,18 +16,30 @@ import java.util.Map;
 @RestController
 @RequestMapping("/comments")
 public class CommentController {
-    private CommentService commentService;
+    private final CommentService defaultCommentService;
+    private final CommentService advancedCommentService;
 
     @Autowired
-    public void setCommentService(CommentService commentService) {
-        this.commentService = commentService;
+    public CommentController(
+            CommentService defaultCommentService,
+            @Qualifier("advancedCommentService") CommentService advancedCommentService) {
+        this.defaultCommentService = defaultCommentService;
+        this.advancedCommentService = advancedCommentService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<String> addComment(@RequestBody Map<String, Object> requestBody) {
+    @PostMapping("/createDefault")
+    public ResponseEntity<String> createDefaultComment(@RequestBody Map<String, Object> requestBody) {
         String content = (String) requestBody.get("content");
-        commentService.createComment(content);
+        defaultCommentService.createComment(content);
 
-        return new ResponseEntity<>("Comment added: " + content, HttpStatus.OK);
+        return new ResponseEntity<>("Default comment added: " + content, HttpStatus.OK);
+    }
+
+    @PostMapping("/createAdvanced")
+    public ResponseEntity<String> createAdvancedComment(@RequestBody Map<String, Object> requestBody) {
+        String content = (String) requestBody.get("content");
+        advancedCommentService.createComment(content);
+
+        return new ResponseEntity<>("Advanced comment added: " + content, HttpStatus.OK);
     }
 }
