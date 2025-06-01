@@ -1,5 +1,6 @@
 package com.post_hub.iam_service.controller;
 
+import com.post_hub.iam_service.mapper.PostMapper;
 import com.post_hub.iam_service.model.constants.ApiErrorMessage;
 import com.post_hub.iam_service.model.constants.ApiLogMessage;
 import com.post_hub.iam_service.model.dto.post.PostDTO;
