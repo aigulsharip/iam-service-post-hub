@@ -1,6 +1,7 @@
 package com.post_hub.iam_service.mapper;
 
 import com.post_hub.iam_service.model.dto.post.PostDTO;
+import com.post_hub.iam_service.model.dto.post.PostSearchDTO;
 import com.post_hub.iam_service.model.entity.Post;
 import com.post_hub.iam_service.model.request.post.PostRequest;
 import com.post_hub.iam_service.model.request.post.UpdatePostRequest;
@@ -14,11 +15,6 @@ import org.mapstruct.*;
 )
 public interface PostMapper {
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "content", target = "content")
-    @Mapping(source = "likes", target = "likes")
-    @Mapping(source = "created", target = "created", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
     PostDTO toPostDTO(Post post);
 
     @Mapping(target = "id", ignore = true)
@@ -28,5 +24,9 @@ public interface PostMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)
     void updatePost(@MappingTarget Post post, UpdatePostRequest request);
+
+    @Mapping(source = "deleted", target = "isDeleted")
+    PostSearchDTO toPostSearchDTO(Post post);
+
 }
 
