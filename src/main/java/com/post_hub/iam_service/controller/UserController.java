@@ -5,21 +5,22 @@ import com.post_hub.iam_service.model.constants.ApiLogMessage;
 import com.post_hub.iam_service.model.dto.post.PostDTO;
 import com.post_hub.iam_service.model.dto.user.UserDto;
 import com.post_hub.iam_service.model.entity.User;
+import com.post_hub.iam_service.model.request.user.NewUserRequest;
 import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.service.UserService;
 import com.post_hub.iam_service.utils.ApiUtils;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("${end.point.users}")
 public class UserController {
 
@@ -31,6 +32,15 @@ public class UserController {
 
         IamResponse<UserDto> response = userService.getById(id);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("${end.points.create}")
+    public ResponseEntity<IamResponse<UserDto>> createUser(@NotNull @Valid @RequestBody NewUserRequest request) {
+        log.trace(ApiLogMessage.NAME_OF_CURRENT_METHOD.getValue(), ApiUtils.getMethodName());
+
+        IamResponse<UserDto> response = userService.createUser(request);
+        return ResponseEntity.ok(response);
+
     }
 
 

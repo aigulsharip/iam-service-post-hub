@@ -10,6 +10,9 @@ public enum ApiErrorMessage {
     POST_NOT_FOUND_BY_ID("Post with ID: %s was not found"),
     POST_ALREADY_EXISTS("Post with title: %s already exists"),
     USER_NOT_FOUND_BY_ID("User with ID: %s was not found"),
+    USER_ALREADY_USERNAME_EXISTS("User with this username or email: %s already exists"),
+    USER_ALREADY_EMAIL_EXISTS("User with this email: %s already exists"),
+
     ;
 
     private final String message;
