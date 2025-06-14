@@ -1,22 +1,18 @@
-package com.post_hub.iam_service.model.dto.post;
+package com.post_hub.iam_service.model.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostSearchDTO implements Serializable {
+public class UserSearchDto {
     private Integer id;
-    private String title;
-    private String content;
-    private Integer likes;
+    private String username;
+    private String email;
     private LocalDateTime created;
     private Boolean isDeleted;
-    private String createdBy;
-
 }
