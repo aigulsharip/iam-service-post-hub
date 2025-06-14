@@ -39,4 +39,8 @@ public class Post {
 
     @Column
     private Boolean deleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
