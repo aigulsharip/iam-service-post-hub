@@ -1,6 +1,7 @@
 package com.post_hub.iam_service.mapper;
 
 import com.post_hub.iam_service.model.dto.user.UserDto;
+import com.post_hub.iam_service.model.dto.user.UserSearchDto;
 import com.post_hub.iam_service.model.entity.User;
 import com.post_hub.iam_service.model.enums.RegistrationStatus;
 import com.post_hub.iam_service.model.request.user.NewUserRequest;
@@ -29,4 +30,6 @@ public interface UserMapper {
     @Mapping(target = "created", ignore = true)
     User updateUser(@MappingTarget User user, UpdateUserRequest updateUserRequest);
 
+    @Mapping(source = "deleted", target = "isDeleted")
+    UserSearchDto toUserSearchDto(User user);
 }
