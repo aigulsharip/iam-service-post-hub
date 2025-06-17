@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public IamResponse<UserDto> getById(Integer id) {
@@ -48,6 +50,7 @@ public class UserServiceImpl implements UserService {
             throw new DataExistException(ApiErrorMessage.USER_ALREADY_EMAIL_EXISTS.getMessage(request.getEmail()));
         }
         User user = userMapper.createUser(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         User savedUser = userRepository.save(user);
         UserDto userDto = userMapper.toDto(savedUser);
         return IamResponse.createSuccessful(userDto);
