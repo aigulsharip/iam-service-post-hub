@@ -13,6 +13,16 @@ public enum ApiErrorMessage {
     USER_ALREADY_USERNAME_EXISTS("User with this username or email: %s already exists"),
     USER_ALREADY_EMAIL_EXISTS("User with this email: %s already exists"),
     ROLE_NOT_FOUND_BY_NAME("Role with name was not found"),
+    EMAIL_NOT_FOUND("Email was not found"),
+    INVALID_TOKEN_SIGNATURE("Invalid token signature"),
+    ERROR_DURING_JWT_PROCESSING("An unexpected error occurred during JWT processing"),
+    TOKEN_EXPIRED("Token expired."),
+    UNEXPECTED_ERROR_OCCURRED("An unexpected error occurred. Please try again later."),
+
+    AUTHENTICATION_FAILED_FOR_USER("Authentication failed for user: {}. "),
+    INVALID_USER_OR_PASSWORD("Invalid email or password. Try again"),
+    INVALID_USER_REGISTRATION_STATUS("Invalid user registration status: %s. "),
+    NOT_FOUND_REFRESH_TOKEN("Refresh token not found."),
 
     ;
 

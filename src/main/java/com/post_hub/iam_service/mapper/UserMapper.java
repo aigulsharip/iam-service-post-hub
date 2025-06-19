@@ -2,6 +2,7 @@ package com.post_hub.iam_service.mapper;
 
 import com.post_hub.iam_service.model.dto.role.RoleDto;
 import com.post_hub.iam_service.model.dto.user.UserDto;
+import com.post_hub.iam_service.model.dto.user.UserProfileDto;
 import com.post_hub.iam_service.model.dto.user.UserSearchDto;
 import com.post_hub.iam_service.model.entity.Role;
 import com.post_hub.iam_service.model.entity.User;
@@ -23,7 +24,6 @@ import java.util.List;
 )
 public interface UserMapper {
 
-    @Mapping(source = "last_login", target = "lastLogin")
     @Mapping(target = "roles", expression = "java(mapRoles(user.getRoles()))")
     UserDto toDto(User user);
 
@@ -39,6 +39,13 @@ public interface UserMapper {
     @Mapping(source = "deleted", target = "isDeleted")
     @Mapping(target = "roles", expression = "java(mapRoles(user.getRoles()))")
     UserSearchDto toUserSearchDto(User user);
+
+    @Mapping(target = "roles", expression = "java(mapRoles(user.getRoles()))")
+    @Mapping(target = "username", source = "user.username")
+    @Mapping(target = "email", source = "user.email")
+    @Mapping(target = "token", source = "token")
+    UserProfileDto toUserProfileDto(User user, String token);
+
 
     default List<RoleDto> mapRoles(Collection<Role> roles) {
         return roles.stream()
