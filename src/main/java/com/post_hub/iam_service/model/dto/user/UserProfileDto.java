@@ -20,6 +20,7 @@ public class UserProfileDto implements Serializable {
     private LocalDateTime lastLogin;
 
     private String token;
+    private String refreshToken;
     private List<RoleDto> roles;
 
 }

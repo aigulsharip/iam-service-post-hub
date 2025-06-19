@@ -4,6 +4,8 @@ import com.post_hub.iam_service.model.constants.ApiConstants;
 import jakarta.servlet.http.Cookie;
 import org.springframework.http.HttpHeaders;
 
+import java.util.UUID;
+
 public class ApiUtils {
 
     public static String getMethodName() {
@@ -21,5 +23,9 @@ public class ApiUtils {
         authorizationCookie.setPath("/");
         authorizationCookie.setMaxAge(300);
         return authorizationCookie;
+    }
+
+    public static String generateUuidWithDash() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 }

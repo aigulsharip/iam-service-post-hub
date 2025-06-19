@@ -44,7 +44,8 @@ public interface UserMapper {
     @Mapping(target = "username", source = "user.username")
     @Mapping(target = "email", source = "user.email")
     @Mapping(target = "token", source = "token")
-    UserProfileDto toUserProfileDto(User user, String token);
+    @Mapping(target = "refreshToken", source = "refreshToken")
+    UserProfileDto toUserProfileDto(User user, String token, String refreshToken);
 
 
     default List<RoleDto> mapRoles(Collection<Role> roles) {
