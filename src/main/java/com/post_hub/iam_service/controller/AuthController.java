@@ -3,6 +3,7 @@ package com.post_hub.iam_service.controller;
 import com.post_hub.iam_service.model.constants.ApiLogMessage;
 import com.post_hub.iam_service.model.dto.user.LoginRequest;
 import com.post_hub.iam_service.model.dto.user.UserProfileDto;
+import com.post_hub.iam_service.model.request.user.RegistrationUserRequest;
 import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.service.AuthService;
 import com.post_hub.iam_service.utils.ApiUtils;
@@ -47,6 +48,19 @@ public class AuthController {
         response.addCookie(authorizationCookie);
         return ResponseEntity.ok(result);
 
+    }
+
+    @PostMapping("${end.points.register}")
+    public ResponseEntity<?> register(
+            @RequestBody @Valid RegistrationUserRequest request,
+            HttpServletResponse response) {
+        log.trace(ApiLogMessage.NAME_OF_CURRENT_METHOD.getValue(), ApiUtils.getMethodName());
+
+        IamResponse<UserProfileDto> result = authService.registerUser(request);
+        Cookie authorizationCookie = ApiUtils.createAuthCookie(result.getPayload().getToken());
+        response.addCookie(authorizationCookie);
+
+        return ResponseEntity.ok(result);
     }
 
 }
