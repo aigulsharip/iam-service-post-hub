@@ -53,15 +53,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public IamResponse<UserDto> createUser(NewUserRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new DataExistException(ApiErrorMessage.USER_ALREADY_USERNAME_EXISTS.getMessage(request.getUsername()));
+            throw new DataExistException(ApiErrorMessage.USERNAME_ALREADY_EXISTS.getMessage(request.getUsername()));
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DataExistException(ApiErrorMessage.USER_ALREADY_EMAIL_EXISTS.getMessage(request.getEmail()));
+            throw new DataExistException(ApiErrorMessage.EMAIL_ALREADY_EXISTS.getMessage(request.getEmail()));
         }
 
         Role userRole = roleRepository.findByName(IamServiceUserRole.USER.getRole())
-                .orElseThrow(() -> new NotFoundException(ApiErrorMessage.ROLE_NOT_FOUND_BY_NAME.getMessage()));
+                .orElseThrow(() -> new NotFoundException(ApiErrorMessage.USER_ROLE_NOT_FOUND.getMessage()));
 
         User user = userMapper.createUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));

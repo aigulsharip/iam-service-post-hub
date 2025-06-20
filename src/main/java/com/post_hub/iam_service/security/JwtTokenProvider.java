@@ -64,8 +64,9 @@ public class JwtTokenProvider {
         }
     }
 
-    public String getEmail(String token) {
-        return getAllClaimsFromToken(token).getSubject();
+    public String getUsername(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        return claims.get(AuthenticationConstants.USERNAME).toString();
     }
 
     public List<String> getRoles(String token) {

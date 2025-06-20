@@ -16,6 +16,7 @@ import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.repository.RoleRepository;
 import com.post_hub.iam_service.repository.UserRepository;
 import com.post_hub.iam_service.security.JwtTokenProvider;
+import com.post_hub.iam_service.security.validation.AccessValidator;
 import com.post_hub.iam_service.service.AuthService;
 import com.post_hub.iam_service.service.RefreshTokenService;
 import com.post_hub.iam_service.utils.PasswordUtils;
@@ -43,6 +44,7 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AccessValidator accessValidator;
 
     @Override
     public IamResponse<UserProfileDto> login(LoginRequest request) {
@@ -79,27 +81,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public IamResponse<UserProfileDto> registerUser(@NonNull RegistrationUserRequest request) {
-
-        userRepository.findByUsername(request.getUsername()).ifPresent(existingUser -> {
-            throw new DataExistException(ApiErrorMessage.USER_ALREADY_USERNAME_EXISTS.getMessage(request.getUsername()));
-        });
-
-        userRepository.findByEmail(request.getEmail()).ifPresent(existingUser -> {
-            throw new DataExistException(ApiErrorMessage.USER_ALREADY_EMAIL_EXISTS.getMessage(request.getEmail()));
-        });
-
-        String password = request.getPassword();
-        String confirmPassword = request.getConfirmPassword();
-
-        if (!password.equals(confirmPassword)) {
-            throw new InvalidPasswordException(ApiErrorMessage.MISMATCH_PASSWORDS.getMessage());
-        }
-        if (PasswordUtils.isNotValidPassword(password)) {
-            throw new InvalidPasswordException(ApiErrorMessage.INVALID_PASSWORD.getMessage());
-        }
-
+        accessValidator.validateNewUser(request.getUsername(), request.getEmail(), request.getPassword(), request.getConfirmPassword());
         Role userRole = roleRepository.findByName(IamServiceUserRole.USER.getRole())
-                .orElseThrow(() -> new DataExistException(ApiErrorMessage.ROLE_NOT_FOUND_BY_NAME.getMessage()));
+                .orElseThrow(() -> new DataExistException(ApiErrorMessage.USER_ROLE_NOT_FOUND.getMessage()));
 
         User newUser =userMapper.fromDto(request);
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));

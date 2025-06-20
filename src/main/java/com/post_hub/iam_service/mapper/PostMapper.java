@@ -20,9 +20,7 @@ public interface PostMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)
-    @Mapping(target = "user", source = "user")
-    @Mapping(target = "createdBy", source = "user.username")
-    Post createPost(PostRequest request, User user);
+    Post createPost(PostRequest request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)
