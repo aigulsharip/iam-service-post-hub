@@ -17,6 +17,7 @@ import com.post_hub.iam_service.model.response.PaginationResponse;
 import com.post_hub.iam_service.repository.RoleRepository;
 import com.post_hub.iam_service.repository.UserRepository;
 import com.post_hub.iam_service.repository.criteria.UserSearchCriteria;
+import com.post_hub.iam_service.security.validation.AccessValidator;
 import com.post_hub.iam_service.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final AccessValidator accessValidator;
 
     @Override
     public IamResponse<UserDto> getById(Integer id) {
@@ -76,6 +78,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public IamResponse<UserDto> updateUser(Integer id, UpdateUserRequest request) {
         User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new NotFoundException(ApiErrorMessage.USER_NOT_FOUND_BY_ID.getMessage(id)));
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new DataExistException(ApiErrorMessage.USERNAME_ALREADY_EXISTS.getMessage(request.getUsername()));
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new DataExistException(ApiErrorMessage.EMAIL_ALREADY_EXISTS.getMessage(request.getEmail()));
+        }
+        accessValidator.validateAdminOrOwnAccess(user.getId());
         userMapper.updateUser(user, request);
         user.setUpdated(LocalDateTime.now());
         userRepository.save(user);
@@ -87,6 +97,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void softDeleteUser(Integer id) {
         User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new NotFoundException(ApiErrorMessage.USER_NOT_FOUND_BY_ID.getMessage(id)));
+        accessValidator.validateAdminOrOwnAccess(user.getId());
         user.setDeleted(true);
         userRepository.save(user);
     }

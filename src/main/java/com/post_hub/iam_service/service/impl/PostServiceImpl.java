@@ -16,6 +16,7 @@ import com.post_hub.iam_service.model.response.PaginationResponse;
 import com.post_hub.iam_service.repository.PostRepository;
 import com.post_hub.iam_service.repository.UserRepository;
 import com.post_hub.iam_service.repository.criteria.PostSearchCriteria;
+import com.post_hub.iam_service.security.validation.AccessValidator;
 import com.post_hub.iam_service.service.PostService;
 
 import jakarta.validation.constraints.NotNull;
@@ -34,10 +35,12 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final UserRepository userRepository;
+    private final AccessValidator accessValidator;
 
     @Override
     public IamResponse<PostDTO> getById(@NotNull Integer postId) {
         Post post = postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() ->new NotFoundException(ApiErrorMessage.POST_NOT_FOUND_BY_ID.getMessage(postId)));
+        accessValidator.validateAdminOrOwnAccess(post.getUser().getId());
         PostDTO postDTO = postMapper.toPostDTO(post);
         return IamResponse.createSuccessful(postDTO);
     }
@@ -62,6 +65,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public IamResponse<PostDTO> updatePost(@NotNull Integer postId, @NotNull UpdatePostRequest updatePostRequest) {
         Post post = postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() ->new NotFoundException(ApiErrorMessage.POST_NOT_FOUND_BY_ID.getMessage(postId)));
+        accessValidator.validateAdminOrOwnAccess(post.getUser().getId());
 
         postMapper.updatePost(post, updatePostRequest);
         post.setUpdated(LocalDateTime.now());
@@ -75,6 +79,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void softDeletePost(Integer postId) {
         Post post = postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() -> new NotFoundException(ApiErrorMessage.POST_NOT_FOUND_BY_ID.getMessage(postId)));
+        accessValidator.validateAdminOrOwnAccess(post.getUser().getId());
 
         post.setDeleted(true);
 
