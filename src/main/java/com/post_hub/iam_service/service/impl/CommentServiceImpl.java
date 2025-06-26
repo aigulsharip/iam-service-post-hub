@@ -3,11 +3,19 @@ package com.post_hub.iam_service.service.impl;
 import com.post_hub.iam_service.mapper.CommentMapper;
 import com.post_hub.iam_service.model.constants.ApiErrorMessage;
 import com.post_hub.iam_service.model.dto.comment.CommentDto;
+import com.post_hub.iam_service.model.dto.post.PostDTO;
 import com.post_hub.iam_service.model.entity.Comment;
+import com.post_hub.iam_service.model.entity.Post;
+import com.post_hub.iam_service.model.entity.User;
+import com.post_hub.iam_service.model.exception.DataExistException;
 import com.post_hub.iam_service.model.exception.NotFoundException;
+import com.post_hub.iam_service.model.request.comment.CommentRequest;
 import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.repository.CommentRepository;
+import com.post_hub.iam_service.repository.PostRepository;
+import com.post_hub.iam_service.repository.UserRepository;
 import com.post_hub.iam_service.service.CommentService;
+import com.post_hub.iam_service.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +25,9 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+    private final ApiUtils apiUtils;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     @Override
     public IamResponse<CommentDto> getCommentById(Integer id) {
@@ -25,5 +36,22 @@ public class CommentServiceImpl implements CommentService {
         CommentDto commentDto = commentMapper.toCommentDto(comment);
 
         return IamResponse.createSuccessful(commentDto);
+    }
+
+    @Override
+    public IamResponse<CommentDto> createComment(CommentRequest commentRequest) {
+        Integer userId = apiUtils.getUserIdFromAuthentication();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ApiErrorMessage.USER_NOT_FOUND_BY_ID.getMessage(userId)));
+
+        Post post = postRepository.findById(commentRequest.getPostId())
+                .orElseThrow(() -> new NotFoundException(ApiErrorMessage.POST_NOT_FOUND_BY_ID.getMessage(commentRequest.getPostId())));
+
+        //Comment comment = commentMapper.createComment(commentRequest, user, post);
+        Comment comment = commentMapper.createComment(commentRequest, user, post);
+        comment = commentRepository.save(comment);
+        postRepository.save(post);
+
+        return IamResponse.createSuccessful(commentMapper.toCommentDto(comment));
     }
 }

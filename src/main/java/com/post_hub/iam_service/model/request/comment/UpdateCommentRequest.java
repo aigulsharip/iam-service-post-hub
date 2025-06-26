@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentRequest implements Serializable {
+public class UpdateCommentRequest {
 
     @NotNull(message = "Post Id cannot be null")
     private Integer postId;
