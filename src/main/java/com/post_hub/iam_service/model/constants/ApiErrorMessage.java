@@ -34,6 +34,10 @@ public enum ApiErrorMessage {
             + ApiConstants.REQUIRED_MIN_CHARACTERS_NUMBER_IN_PASSWORD + " character(s), "
             + ApiConstants.REQUIRED_MIN_DIGITS_NUMBER_IN_PASSWORD + " digit(s). "),
     HAVE_NO_ACCESS("You dont hace necessary permissions "),
+
+    COMMENT_NOT_FOUND_BY_ID("Comment with ID: %s was not found"),
+
+
     ;
 
 

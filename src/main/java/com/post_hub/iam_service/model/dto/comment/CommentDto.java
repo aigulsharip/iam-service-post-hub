@@ -22,6 +22,6 @@ public class CommentDto implements Serializable {
     private String message;
     private LocalDateTime created;
     private LocalDateTime updated;
-    private PostOwnerDto postOwnerDto;
+    private PostOwnerDto owner;
     private Integer postId;
 }
