@@ -7,6 +7,7 @@ import com.post_hub.iam_service.model.request.user.RegistrationUserRequest;
 import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.service.AuthService;
 import com.post_hub.iam_service.utils.ApiUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -25,6 +26,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("${end.points.login}")
+    @Operation(
+            summary = "User login",
+            description = "Authenticates"
+    )
     public ResponseEntity<?> login(
             @RequestBody @Valid LoginRequest request,
             HttpServletResponse response) {
