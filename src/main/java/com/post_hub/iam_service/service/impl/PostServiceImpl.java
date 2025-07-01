@@ -40,7 +40,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public IamResponse<PostDTO> getById(@NotNull Integer postId) {
         Post post = postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() ->new NotFoundException(ApiErrorMessage.POST_NOT_FOUND_BY_ID.getMessage(postId)));
-        accessValidator.validateAdminOrOwnAccess(post.getUser().getId());
+        //accessValidator.validateAdminOrOwnAccess(post.getUser().getId());
         PostDTO postDTO = postMapper.toPostDTO(post);
         return IamResponse.createSuccessful(postDTO);
     }
@@ -50,7 +50,6 @@ public class PostServiceImpl implements PostService {
         if (postRepository.existsByTitle(postRequest.getTitle())) {
             throw new DataExistException(ApiErrorMessage.POST_ALREADY_EXISTS.getMessage(postRequest.getTitle()));
         }
-
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(ApiErrorMessage.USER_NOT_FOUND_BY_USERNAME.getMessage(username)));
 
         Post post = postMapper.createPost(postRequest);

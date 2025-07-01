@@ -57,7 +57,6 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findById(commentRequest.getPostId())
                 .orElseThrow(() -> new NotFoundException(ApiErrorMessage.POST_NOT_FOUND_BY_ID.getMessage(commentRequest.getPostId())));
 
-        //Comment comment = commentMapper.createComment(commentRequest, user, post);
         Comment comment = commentMapper.createComment(commentRequest, user, post);
         comment = commentRepository.save(comment);
         postRepository.save(post);
