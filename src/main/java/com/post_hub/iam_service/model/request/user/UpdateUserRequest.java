@@ -6,19 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateUserRequest {
-    @NotBlank(message = "Username cannot be empty")
-    @Size(min = 2, max = 50)
+public class UpdateUserRequest implements Serializable {
+
     private String username;
-
-    @NotBlank(message = "Password cannot be empty")
-    @Size(min = 2, max = 50)
-    private String password;
-
-    @NotBlank(message = "Email cannot be empty")
-    @Size(min = 2, max = 50)
     private String email;
+
 }
