@@ -1,5 +1,6 @@
 package com.post_hub.iam_service.service.impl;
 
+import com.post_hub.iam_service.kafka.service.KafkaMessageService;
 import com.post_hub.iam_service.mapper.UserMapper;
 import com.post_hub.iam_service.model.constants.ApiErrorMessage;
 import com.post_hub.iam_service.model.dto.user.UserDto;
@@ -44,6 +45,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final AccessValidator accessValidator;
+    private final KafkaMessageService kafkaMessageService;
+
 
     @Override
     public IamResponse<UserDto> getById(Integer id) {
@@ -72,6 +75,7 @@ public class UserServiceImpl implements UserService {
         user.setRoles(roles);
         User savedUser = userRepository.save(user);
         UserDto userDto = userMapper.toDto(savedUser);
+        kafkaMessageService.sendUserCreatedMessage(user.getId(), user.getUsername());
         return IamResponse.createSuccessful(userDto);
     }
 
@@ -91,6 +95,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         UserDto userDto = userMapper.toDto(user);
+        kafkaMessageService.sendUserUpdatedMessage(user.getId(), user.getUsername());
+
         return IamResponse.createSuccessful(userDto);
     }
 
@@ -100,6 +106,8 @@ public class UserServiceImpl implements UserService {
         accessValidator.validateAdminOrOwnAccess(user.getId());
         user.setDeleted(true);
         userRepository.save(user);
+        kafkaMessageService.sendUserDeletedMessage(id, user.getUsername());
+
     }
 
     @Override
