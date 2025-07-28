@@ -1,5 +1,6 @@
 package com.post_hub.iam_service.service.impl;
 
+import com.post_hub.iam_service.kafka.service.KafkaMessageService;
 import com.post_hub.iam_service.mapper.CommentMapper;
 import com.post_hub.iam_service.model.constants.ApiErrorMessage;
 import com.post_hub.iam_service.model.dto.comment.CommentDto;
@@ -38,6 +39,7 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final AccessValidator  accessValidator;
+    private final KafkaMessageService kafkaMessageService;
 
     @Override
     public IamResponse<CommentDto> getCommentById(Integer id) {
@@ -60,6 +62,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentMapper.createComment(commentRequest, user, post);
         comment = commentRepository.save(comment);
         postRepository.save(post);
+        kafkaMessageService.sendCommentCreatedMessage(userId, comment.getId());
 
         return IamResponse.createSuccessful(commentMapper.toCommentDto(comment));
     }
@@ -78,6 +81,7 @@ public class CommentServiceImpl implements CommentService {
 
         commentMapper.updateComment(comment, request);
         comment = commentRepository.save(comment);
+        kafkaMessageService.sendCommentUpdatedMessage(comment.getPost().getUser().getId(),comment.getId(), comment.getMessage());
 
         return IamResponse.createSuccessful(commentMapper.toCommentDto(comment));
 
@@ -91,6 +95,7 @@ public class CommentServiceImpl implements CommentService {
 
         comment.setDeleted(true);
         commentRepository.save(comment);
+        kafkaMessageService.sendCommentDeletedMessage(comment.getPost().getUser().getId(),comment.getId());
     }
 
     @Override
