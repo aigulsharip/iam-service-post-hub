@@ -1,5 +1,6 @@
 package com.post_hub.iam_service.service;
 
+import com.post_hub.iam_service.kafka.service.KafkaMessageService;
 import com.post_hub.iam_service.mapper.UserMapper;
 import com.post_hub.iam_service.model.dto.user.UserDto;
 import com.post_hub.iam_service.model.entity.Role;
@@ -45,6 +46,10 @@ public class UserServiceTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private KafkaMessageService kafkaMessageService;
+
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -132,6 +137,7 @@ public class UserServiceTest {
         verify(userRepository, times(1)).existsByUsername(request.getUsername());
         verify(userRepository, times(1)).save(any(User.class));
         verify(userMapper, times(1)).toDto(newUser);
+        verify(kafkaMessageService, times(1)).sendUserCreatedMessage(newUser.getId(), newUser.getUsername());
 
     }
 
