@@ -14,10 +14,7 @@ import com.post_hub.iam_service.repository.UserRepository;
 import com.post_hub.iam_service.security.JwtTokenProvider;
 import lombok.Setter;
 import org.hibernate.Hibernate;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +38,7 @@ import java.util.Objects;
 @SpringBootTest(classes = IamServiceApplication.class)
 @AutoConfigureMockMvc
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
-
+@Tag("integration")
 public class UserControllerTest {
 
     @Autowired @Setter
