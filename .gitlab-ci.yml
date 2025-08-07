@@ -10,7 +10,7 @@ variables:
   SERVICE_PORT: 8189
   SERVICE_NAME: iam-service
   IMAGE_NAME: iam-service-post-hub
-  HOST: ${SERVER_IP}
+  HOST: 185.233.119.44
   CI_REGISTRY: "docker.io"
   CI_REGISTRY_USER: "aigulsharip"
   CI_REGISTRY_PASSWORD: "dckr_pat_Z1rxu3EJYTKC0RbMguV83Whkylk"
