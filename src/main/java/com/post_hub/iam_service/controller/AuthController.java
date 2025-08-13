@@ -6,6 +6,7 @@ import com.post_hub.iam_service.model.dto.user.UserProfileDto;
 import com.post_hub.iam_service.model.request.user.RegistrationUserRequest;
 import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.service.AuthService;
+import com.post_hub.iam_service.service.MailSenderService;
 import com.post_hub.iam_service.utils.ApiUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${end.points.auth}")
 public class AuthController {
     private final AuthService authService;
+    private final MailSenderService mailSenderService;
+
 
     @PostMapping("${end.points.login}")
     @Operation(
@@ -57,15 +60,20 @@ public class AuthController {
 
     @PostMapping("${end.points.register}")
     public ResponseEntity<?> register(
-            @RequestBody @Valid RegistrationUserRequest request,
-            HttpServletResponse response) {
+            @RequestBody @Valid RegistrationUserRequest request) {
         log.trace(ApiLogMessage.NAME_OF_CURRENT_METHOD.getValue(), ApiUtils.getMethodName());
 
-        IamResponse<UserProfileDto> result = authService.registerUser(request);
-        Cookie authorizationCookie = ApiUtils.createAuthCookie(result.getPayload().getToken());
-        response.addCookie(authorizationCookie);
-
+        IamResponse<String> result = authService.registerUser(request);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("${end.points.confirm}")
+    public ResponseEntity<IamResponse<String>> registerConfirmation(
+            @RequestParam String token) {
+        log.trace(ApiLogMessage.NAME_OF_CURRENT_METHOD.getValue(), ApiUtils.getMethodName());
+
+        mailSenderService.validateToken(token);
+        return ResponseEntity.ok(IamResponse.createSuccessful("Email confirmed"));
     }
 
 }

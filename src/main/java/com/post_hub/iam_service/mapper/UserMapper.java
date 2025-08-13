@@ -50,7 +50,7 @@ public interface UserMapper {
 
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "roles", ignore = true)
-    @Mapping(target = "registrationStatus", expression = "java(RegistrationStatus.ACTIVE)")
+    @Mapping(target = "registrationStatus", expression = "java(RegistrationStatus.PENDING_CONFIRMATION)")
     User fromDto(RegistrationUserRequest registrationUserRequest);
 
     default List<RoleDto> mapRoles(Collection<Role> roles) {

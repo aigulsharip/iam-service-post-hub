@@ -4,10 +4,12 @@ import com.post_hub.iam_service.mapper.UserMapper;
 import com.post_hub.iam_service.model.constants.ApiErrorMessage;
 import com.post_hub.iam_service.model.dto.user.LoginRequest;
 import com.post_hub.iam_service.model.dto.user.UserProfileDto;
+import com.post_hub.iam_service.model.entity.EmailVerificationToken;
 import com.post_hub.iam_service.model.entity.RefreshToken;
 import com.post_hub.iam_service.model.entity.Role;
 import com.post_hub.iam_service.model.entity.User;
 import com.post_hub.iam_service.model.enums.IamServiceUserRole;
+import com.post_hub.iam_service.model.enums.RegistrationStatus;
 import com.post_hub.iam_service.model.exception.DataExistException;
 import com.post_hub.iam_service.model.exception.InvalidDataException;
 import com.post_hub.iam_service.model.exception.InvalidPasswordException;
@@ -18,6 +20,7 @@ import com.post_hub.iam_service.repository.UserRepository;
 import com.post_hub.iam_service.security.JwtTokenProvider;
 import com.post_hub.iam_service.security.validation.AccessValidator;
 import com.post_hub.iam_service.service.AuthService;
+import com.post_hub.iam_service.service.MailSenderService;
 import com.post_hub.iam_service.service.RefreshTokenService;
 import com.post_hub.iam_service.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
@@ -45,9 +48,17 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AccessValidator accessValidator;
+    private final MailSenderService mailSenderService;
 
     @Override
     public IamResponse<UserProfileDto> login(LoginRequest request) {
+        User user = userRepository.findUserByEmailAndDeletedFalse(request.getEmail())
+                .orElseThrow(() -> new InvalidDataException(ApiErrorMessage.INVALID_USER_OR_PASSWORD.getMessage()));
+
+        if (user.getRegistrationStatus() != RegistrationStatus.ACTIVE) {
+            throw new InvalidDataException(ApiErrorMessage.CONFIRM_YOUR_EMAIL.getMessage());
+        }
+
         try{
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
@@ -55,8 +66,6 @@ public class AuthServiceImpl implements AuthService {
         } catch (BadCredentialsException e) {
             throw new InvalidDataException(ApiErrorMessage.INVALID_USER_OR_PASSWORD.getMessage());
         }
-        User user = userRepository.findUserByEmailAndDeletedFalse(request.getEmail())
-                .orElseThrow(() -> new InvalidDataException(ApiErrorMessage.INVALID_USER_OR_PASSWORD.getMessage()));
 
         RefreshToken refreshToken = refreshTokenService.generateOrUpdateRefreshToken(user);
         String token = jwtTokenProvider.generateToken(user);
@@ -80,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public IamResponse<UserProfileDto> registerUser(@NonNull RegistrationUserRequest request) {
+    public IamResponse<String> registerUser(@NonNull RegistrationUserRequest request) {
         accessValidator.validateNewUser(request.getUsername(), request.getEmail(), request.getPassword(), request.getConfirmPassword());
         Role userRole = roleRepository.findByName(IamServiceUserRole.USER.getRole())
                 .orElseThrow(() -> new DataExistException(ApiErrorMessage.USER_ROLE_NOT_FOUND.getMessage()));
@@ -92,10 +101,11 @@ public class AuthServiceImpl implements AuthService {
         newUser.setRoles(roles);
         userRepository.save(newUser);
 
-        RefreshToken refreshToken = refreshTokenService.generateOrUpdateRefreshToken(newUser);
-        String token = jwtTokenProvider.generateToken(newUser);
-        UserProfileDto userProfileDto = userMapper.toUserProfileDto(newUser, token, refreshToken.getToken());
-        userProfileDto.setToken(token);
-        return IamResponse.createSuccessfulWithNewToken(userProfileDto);
+        EmailVerificationToken token = mailSenderService.createToken(newUser);
+        mailSenderService.sendVerificationEmail(newUser.getEmail(), token.getToken());
+
+        return IamResponse.createSuccessful("Registration successful. Please check your email to confirm your account");
+
+
     }
 }

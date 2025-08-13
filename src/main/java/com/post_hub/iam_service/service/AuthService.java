@@ -10,6 +10,6 @@ public interface AuthService {
 
     IamResponse<UserProfileDto> refreshAccessToken(String refreshToken);
 
-    IamResponse<UserProfileDto> registerUser(RegistrationUserRequest request);
+    IamResponse<String> registerUser(RegistrationUserRequest request);
 }
 

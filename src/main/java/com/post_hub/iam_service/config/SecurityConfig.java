@@ -42,6 +42,8 @@ public class SecurityConfig {
             new AntPathRequestMatcher("/comments/all", GET),
             new AntPathRequestMatcher("/users/all", GET),
             new AntPathRequestMatcher("/posts/all", GET),
+            new AntPathRequestMatcher("/auth/confirm/**", GET),
+
 
 
             new AntPathRequestMatcher("/v3/api-docs/**"),

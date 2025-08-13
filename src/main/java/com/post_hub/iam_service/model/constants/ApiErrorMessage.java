@@ -25,6 +25,10 @@ public enum ApiErrorMessage {
     INVALID_USER_OR_PASSWORD("Invalid email or password. Try again"),
     INVALID_USER_REGISTRATION_STATUS("Invalid user registration status: %s. "),
     NOT_FOUND_REFRESH_TOKEN("Refresh token not found."),
+    CONFIRM_YOUR_EMAIL("Please confirm your email before login"),
+    EMAIL_VERIFICATION_TOKEN_NOT_FOUND("Email verification token not found"),
+    CONFIRMATION_LINK_EXPIRED("The confirmation link has expired. Please request a new one"),
+
 
 
     MISMATCH_PASSWORDS("Password does not match"),
