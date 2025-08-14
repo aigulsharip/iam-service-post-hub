@@ -20,6 +20,7 @@ public enum ApiErrorMessage {
     ERROR_DURING_JWT_PROCESSING("An unexpected error occurred during JWT processing"),
     TOKEN_EXPIRED("Token expired."),
     UNEXPECTED_ERROR_OCCURRED("An unexpected error occurred. Please try again later."),
+    USER_NOT_FOUND_AFTER_GOOGLE_LOGIN("User not found after Google login"),
 
     AUTHENTICATION_FAILED_FOR_USER("Authentication failed for user: {}. "),
     INVALID_USER_OR_PASSWORD("Invalid email or password. Try again"),

@@ -145,6 +145,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public IamResponse<UserDto> getUserInfo(String username) {
+        return userRepository.findByUsername(username)
+                .map(user -> {
+                    UserDto userDto = userMapper.toDto(user);
+                    return IamResponse.createSuccessful(userDto);
+                })
+                .orElse(IamResponse.createFailed(ApiErrorMessage.USER_NOT_FOUND_BY_ID.getMessage(username)));
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return getUserDetails(email,userRepository);
     }

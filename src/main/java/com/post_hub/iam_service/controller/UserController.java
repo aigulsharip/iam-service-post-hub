@@ -13,6 +13,7 @@ import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.model.response.PaginationResponse;
 import com.post_hub.iam_service.service.UserService;
 import com.post_hub.iam_service.utils.ApiUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @Slf4j
 @RestController
@@ -86,6 +89,13 @@ public class UserController {
 
         Pageable pageable = PageRequest.of(page, limit);
         IamResponse<PaginationResponse<UserSearchDto>> response = userService.searchUsers(request, pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("${end.points.info}")
+    @Operation(summary = "Get user info", description = "Get user info")
+    public ResponseEntity<IamResponse<UserDto>> getUserData(Principal principal) {
+        IamResponse<UserDto> response = userService.getUserInfo(principal.getName());
         return ResponseEntity.ok(response);
     }
 

@@ -25,4 +25,8 @@ public class IamResponse<P extends Serializable> implements Serializable {
     public static <P extends Serializable> IamResponse<P> createSuccessfulWithNewToken(P payload) {
         return new IamResponse<>(ApiMessage.TOKEN_CREATED_OR_UPDATED.getMessage(), payload, true);
     }
+
+    public static <P extends Serializable> IamResponse<P> createFailed(String message) {
+        return new IamResponse<>(message, null, false);
+    }
 }
