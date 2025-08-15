@@ -60,18 +60,20 @@ public class SecurityConfig {
             new AntPathRequestMatcher("/auth/login", POST),
             new AntPathRequestMatcher("/auth/register", POST),
             new AntPathRequestMatcher("/auth/refresh/token", GET),
+            new AntPathRequestMatcher("/auth/confirm/**", GET),
+            new AntPathRequestMatcher("/email-confirmed.html", GET),
+            new AntPathRequestMatcher("/email-already-confirmed.html", GET),
+
+            new AntPathRequestMatcher("/posts/all", GET),
             new AntPathRequestMatcher("/comments/all", GET),
             new AntPathRequestMatcher("/users/all", GET),
-            new AntPathRequestMatcher("/posts/all", GET),
-            new AntPathRequestMatcher("/auth/confirm/**", GET),
-
-
 
             new AntPathRequestMatcher("/v3/api-docs/**"),
             new AntPathRequestMatcher("/swagger-ui/**"),
             new AntPathRequestMatcher("/swagger-ui.html"),
             new AntPathRequestMatcher("/webjars/**"),
-            new AntPathRequestMatcher("/actuator/**")
+            new AntPathRequestMatcher("/actuator/**"),
+            new AntPathRequestMatcher("/oauth2/**")
     };
 
     @Bean
@@ -102,8 +104,7 @@ public class SecurityConfig {
 
                             String jwt = jwtTokenProvider.generateToken(user);
 
-                            response.sendRedirect("http://localhost:8081/pages/oauth2-success.html?token=" + jwt);
-
+                            response.sendRedirect("https://post-hub-project.fun/pages/oauth2-success.html?token=" + jwt);
                         }))
 
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
