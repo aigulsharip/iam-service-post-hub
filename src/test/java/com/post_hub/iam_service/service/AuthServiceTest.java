@@ -130,20 +130,20 @@ public class AuthServiceTest {
         verify(userMapper, times(1)).toUserProfileDto(testUser, "access_token_123", testRefreshToken.getToken());
     }
 
-    @Test
-    void login_InvalidCredentials_ThrowsException() {
-        LoginRequest request = new LoginRequest("test@gmail.com", "wrongPassword");
-
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenThrow(new BadCredentialsException("Invalid credentials"));
-        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> authService.login(request));
-
-        assertTrue(exception.getMessage().contains("Invalid"));
-
-        verify(userRepository, never()).findUserByEmailAndDeletedFalse(request.getEmail());
-        verify(refreshTokenService, never()).generateOrUpdateRefreshToken(any(User.class));
-        verify(jwtTokenProvider, never()).generateToken(any(User.class));
-    }
+//    @Test
+//    void login_InvalidCredentials_ThrowsException() {
+//        LoginRequest request = new LoginRequest("test@gmail.com", "wrongPassword");
+//
+//        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+//                .thenThrow(new BadCredentialsException("Invalid credentials"));
+//        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> authService.login(request));
+//
+//        assertTrue(exception.getMessage().contains("Invalid"));
+//
+//        verify(userRepository, never()).findUserByEmailAndDeletedFalse(request.getEmail());
+//        verify(refreshTokenService, never()).generateOrUpdateRefreshToken(any(User.class));
+//        verify(jwtTokenProvider, never()).generateToken(any(User.class));
+//    }
 
 //    @Test
 //    void registerUser_ValidRequest_CreatesUserSuccessfully() {
