@@ -6,7 +6,7 @@ import com.post_hub.iam_service.model.dto.post.PostDTO;
 import com.post_hub.iam_service.model.entity.Post;
 import com.post_hub.iam_service.model.entity.User;
 import com.post_hub.iam_service.model.exception.NotFoundException;
-import com.post_hub.iam_service.model.request.post.PostRequest;
+import com.post_hub.iam_service.model.request.post.NewPostRequest;
 import com.post_hub.iam_service.repository.PostRepository;
 import com.post_hub.iam_service.repository.UserRepository;
 import com.post_hub.iam_service.service.impl.PostServiceImpl;
@@ -98,26 +98,27 @@ public class PostServiceTest {
         verify(postMapper, never()).toPostDTO(any(Post.class));
     }
 
-    @Test void createPost_OK() {
-        PostRequest postRequest = new PostRequest("New Title", "New Content", 100);
-        when(postRepository.existsByTitle(postRequest.getTitle())).thenReturn(false);
+    @Test
+    void createPost_OK() {
+        NewPostRequest request = new NewPostRequest("New Title", "New Content", 100, null);
 
-        when(userRepository.findByUsername(testUser.getUsername())).thenReturn(Optional.of(testUser));
-        when(postMapper.createPost(postRequest)).thenReturn(testPost);
+        when(apiUtils.getUserIdFromAuthentication()).thenReturn(testUser.getId());
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+        when(postMapper.createPost(request, testUser, testUser.getUsername())).thenReturn(testPost);
         when(postRepository.save(any(Post.class))).thenReturn(testPost);
         when(postMapper.toPostDTO(testPost)).thenReturn(testPostDTO);
 
-        PostDTO result = postService.createPost(postRequest, testUser.getUsername()).getPayload();
+        PostDTO result = postService.createPost(request).getPayload();
 
         assertNotNull(result);
         assertEquals(testPostDTO.getId(), result.getId());
         assertEquals(testPostDTO.getContent(), result.getContent());
 
-        verify(userRepository, times(1)).findByUsername(testUser.getUsername());
+        verify(apiUtils, times(1)).getUserIdFromAuthentication();
+        verify(userRepository, times(1)).findById(testUser.getId());
         verify(postRepository, times(1)).save(any(Post.class));
         verify(postMapper, times(1)).toPostDTO(any(Post.class));
         verify(kafkaMessageService, times(1)).sendPostCreatedMessage(testUser.getId(), testPost.getId());
-
     }
 
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class User {
-
     public static final String ID_FIELD = "id";
     public static final String USERNAME_NAME_FIELD = "username";
     public static final String EMAIL_NAME_FIELD = "email";
@@ -39,7 +39,7 @@ public class User {
     @Column(nullable = false, length = 50)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime created = LocalDateTime.now();
 
     @Column(nullable = false)
@@ -58,12 +58,14 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new LinkedList<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
-
     )
     private Collection<Role> roles;
 

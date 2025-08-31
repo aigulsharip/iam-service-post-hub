@@ -10,13 +10,15 @@ import com.post_hub.iam_service.model.response.PaginationResponse;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
 
+import java.util.LinkedList;
 
 public interface CommentService {
+
     IamResponse<CommentDto> getCommentById(@NotNull Integer commentId);
 
-    IamResponse<CommentDto> createComment(@NotNull CommentRequest commentRequest);
+    IamResponse<CommentDto> createComment(@NotNull CommentRequest request);
 
-    IamResponse<CommentDto> updateComment(@NotNull Integer commentId, @NotNull UpdateCommentRequest commentRequest);
+    IamResponse<CommentDto> updateComment(@NotNull Integer commentId, @NotNull UpdateCommentRequest request);
 
     void softDelete(@NotNull Integer commentId);
 
@@ -24,5 +26,5 @@ public interface CommentService {
 
     IamResponse<PaginationResponse<CommentSearchDto>> searchComments(@NotNull CommentSearchRequest request, Pageable pageable);
 
-
+    IamResponse<LinkedList<CommentDto>> findAllCommentsByUser();
 }

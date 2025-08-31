@@ -5,11 +5,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.LinkedList;
 import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer>, JpaSpecificationExecutor<Comment> {
 
     Optional<Comment> findByIdAndDeletedFalse(Integer commentId);
+
+    LinkedList<Comment> findAllByUserIdAndDeletedFalse(Integer userId);
+
 
 }

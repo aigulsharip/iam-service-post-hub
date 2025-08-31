@@ -13,6 +13,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+import java.util.LinkedList;
+
 @Mapper(
         componentModel = "spring",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -48,6 +50,8 @@ public interface CommentMapper {
     @Mapping(source = "post.id", target = "postId")
     @Mapping(source = "deleted", target = "isDeleted")
     CommentSearchDto toCommentSearchDTO(Comment comment);
+
+    LinkedList<CommentDto> toDtoList(LinkedList<Comment> comments);
 
 }
 

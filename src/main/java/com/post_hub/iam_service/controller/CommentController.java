@@ -3,6 +3,7 @@ package com.post_hub.iam_service.controller;
 import com.post_hub.iam_service.model.constants.ApiLogMessage;
 import com.post_hub.iam_service.model.dto.comment.CommentDto;
 import com.post_hub.iam_service.model.dto.comment.CommentSearchDto;
+import com.post_hub.iam_service.model.entity.Comment;
 import com.post_hub.iam_service.model.request.comment.CommentRequest;
 import com.post_hub.iam_service.model.request.comment.CommentSearchRequest;
 import com.post_hub.iam_service.model.request.comment.UpdateCommentRequest;
@@ -10,6 +11,7 @@ import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.model.response.PaginationResponse;
 import com.post_hub.iam_service.service.CommentService;
 import com.post_hub.iam_service.utils.ApiUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedList;
 
 
 @Slf4j
@@ -84,6 +88,14 @@ public class CommentController {
 
         Pageable pageable = PageRequest.of(page, limit);
         IamResponse<PaginationResponse<CommentSearchDto>> response = commentService.searchComments(request, pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    @Operation(summary = "Get all comments by user")
+    public ResponseEntity<IamResponse<LinkedList<CommentDto>>> getAllCommentsByUser() {
+
+        IamResponse<LinkedList<CommentDto>> response = commentService.findAllCommentsByUser();
         return ResponseEntity.ok(response);
     }
 }

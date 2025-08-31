@@ -49,4 +49,13 @@ public class ApiUtils {
         String jwtToken = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
         return Integer.parseInt(jwtTokenProvider.getUserId(jwtToken));
     }
+
+    public static Cookie blockAuthCookie() {
+        Cookie authorizationCookie = new Cookie(HttpHeaders.AUTHORIZATION, null);
+        authorizationCookie.setHttpOnly(true);
+        authorizationCookie.setSecure(true);
+        authorizationCookie.setPath("/");
+        authorizationCookie.setMaxAge(0);
+        return authorizationCookie;
+    }
 }

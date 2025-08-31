@@ -3,6 +3,7 @@ package com.post_hub.iam_service.controller;
 import com.post_hub.iam_service.model.constants.ApiLogMessage;
 import com.post_hub.iam_service.model.dto.user.LoginRequest;
 import com.post_hub.iam_service.model.dto.user.UserProfileDto;
+import com.post_hub.iam_service.model.request.user.ChangePasswordRequest;
 import com.post_hub.iam_service.model.request.user.RegistrationUserRequest;
 import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.service.AuthService;
@@ -65,6 +66,27 @@ public class AuthController {
 
         IamResponse<String> result = authService.registerUser(request);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("${end.points.password.reset}")
+    @Operation(summary = "Change user password", description = "Allows authenticated user to change their password")
+    public ResponseEntity<IamResponse<String>> changePassword(
+            @RequestBody @Valid ChangePasswordRequest request) {
+        log.trace(ApiLogMessage.NAME_OF_CURRENT_METHOD.getValue(), ApiUtils.getMethodName());
+
+        IamResponse<String> result = authService.changePassword(request);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("${end.points.logout}")
+    @Operation(summary = "Logout", description = "Logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        log.trace(ApiLogMessage.NAME_OF_CURRENT_METHOD.getValue(), ApiUtils.getMethodName());
+
+        Cookie authorizationCookie = ApiUtils.blockAuthCookie();
+        response.addCookie(authorizationCookie);
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("${end.points.confirm}")

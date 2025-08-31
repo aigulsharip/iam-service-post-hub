@@ -15,7 +15,10 @@ public class PostDTO implements Serializable {
     private String title;
     private String content;
     private Integer likes;
+    private String image;
     private LocalDateTime created;
     private String createdBy;
+    private Integer commentsCount;
+
 
 }

@@ -13,16 +13,22 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class Comment {
-
     public static final String ID_FIELD = "id";
     public static final String MESSAGE_NAME_FIELD = "message";
     public static final String CREATED_BY_FIELD = "createdBy";
     public static final String DELETED_FIELD = "deleted";
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false, length = 500)
     private String message;
@@ -33,19 +39,9 @@ public class Comment {
     @Column(nullable = false)
     private LocalDateTime updated = LocalDateTime.now();
 
-    @Column
+    @Column(nullable = false)
     private Boolean deleted = false;
 
-    @Column(name = "created_by", nullable = false, length = 100)
+    @Column(name = "created_by", length = 100)
     private String createdBy;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
 }
-

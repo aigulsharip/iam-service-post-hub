@@ -114,7 +114,7 @@ public class CommentServiceTest {
 
         when(apiUtils.getUserIdFromAuthentication()).thenReturn(testUser.getId());
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-        when(postRepository.findById(testPost.getId())).thenReturn(Optional.of(testPost));
+        when(postRepository.findByIdAndDeletedFalse(testPost.getId())).thenReturn(Optional.of(testPost));
         when(commentMapper.createComment(request, testUser, testPost)).thenReturn(tesComment);
         when(commentRepository.save(any(Comment.class))).thenReturn(tesComment);
         when(commentMapper.toCommentDto(tesComment)).thenReturn(testCommentDTO);
@@ -126,11 +126,10 @@ public class CommentServiceTest {
 
         verify(apiUtils, times(1)).getUserIdFromAuthentication();
         verify(userRepository, times(1)).findById(testUser.getId());
-        verify(postRepository, times(1)).findById(testPost.getId());
+        verify(postRepository, times(1)).findByIdAndDeletedFalse(testPost.getId());
         verify(commentRepository, times(1)).save(any(Comment.class));
         verify(commentMapper, times(1)).toCommentDto(any(Comment.class));
         verify(kafkaMessageService, times(1)).sendCommentCreatedMessage(testUser.getId(), testPost.getId());
-
     }
 
 }

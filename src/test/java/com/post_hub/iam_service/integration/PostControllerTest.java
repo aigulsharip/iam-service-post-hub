@@ -1,4 +1,4 @@
-package com.post_hub.iam_service.integration;
+package com.post_hub.iam_service.integration.post_controller;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,7 +7,7 @@ import com.post_hub.iam_service.IamServiceApplication;
 import com.post_hub.iam_service.model.dto.post.PostDTO;
 import com.post_hub.iam_service.model.entity.User;
 import com.post_hub.iam_service.model.exception.InvalidDataException;
-import com.post_hub.iam_service.model.request.post.PostRequest;
+import com.post_hub.iam_service.model.request.post.NewPostRequest;
 import com.post_hub.iam_service.model.response.IamResponse;
 import com.post_hub.iam_service.repository.UserRepository;
 import com.post_hub.iam_service.security.JwtTokenProvider;
@@ -52,6 +52,7 @@ class PostControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private String currentJwt;
 
+
     @BeforeAll
     @Transactional
     void authorize() {
@@ -71,12 +72,10 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-
-
     @Test
     @Transactional
     void createPost_OK_200() throws Exception {
-        PostRequest request = new PostRequest("Simple Title", "Simple content", 50);
+        NewPostRequest request = new NewPostRequest("Simple Title", "Simple content", 50, null);
 
         MvcResult requestResult = mockMvc.perform(MockMvcRequestBuilders
                         .post("/posts/create")
@@ -97,11 +96,10 @@ class PostControllerTest {
         Assertions.assertEquals(request.getLikes() , resultBody.getLikes());
     }
 
-
     @Test
     @Transactional
     void updatePost_OK_200() throws Exception {
-        PostRequest request = new PostRequest("Updated Title", "Updated content", 50);
+        NewPostRequest request = new NewPostRequest("Updated Title", "Updated content", 50, null);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/posts/1")
@@ -132,6 +130,5 @@ class PostControllerTest {
             throw new RuntimeException(e);
         }
     }
-
 
 }

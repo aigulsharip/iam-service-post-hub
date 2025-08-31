@@ -15,8 +15,10 @@ public class PostSearchDTO implements Serializable {
     private String title;
     private String content;
     private Integer likes;
+    private String image;
     private LocalDateTime created;
     private Boolean isDeleted;
     private String createdBy;
+    private Integer commentsCount;
 
 }
